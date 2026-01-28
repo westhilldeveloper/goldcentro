@@ -9,6 +9,11 @@ export default function BranchFinder() {
   const [branches, setBranches] = useState([])
   const [selectedBranch, setSelectedBranch] = useState(null)
   const [loading, setLoading] = useState(false)
+  const [userLocation, setUserLocation] = useState(null)
+  const [locationPermissionGranted, setLocationPermissionGranted] = useState(false)
+
+  // Kochi coordinates as fallback
+  const KOCHI_COORDINATES = { lat: 9.9312, lng: 76.2673 }
 
   const sampleBranches = [
     {
@@ -17,7 +22,6 @@ export default function BranchFinder() {
       address: '123 Business District, Mumbai, Maharashtra 400001',
       phone: '+91 95907 04444',
       hours: '10:00 AM - 7:00 PM',
-      distance: '0.5 km',
       coordinates: { lat: 19.0760, lng: 72.8777 }
     },
     {
@@ -26,7 +30,6 @@ export default function BranchFinder() {
       address: '456 Connaught Place, New Delhi 110001',
       phone: '+91 95907 04445',
       hours: '10:00 AM - 7:00 PM',
-      distance: '1.2 km',
       coordinates: { lat: 28.6139, lng: 77.2090 }
     },
     {
@@ -35,28 +38,85 @@ export default function BranchFinder() {
       address: '789 MG Road, Bangalore, Karnataka 560001',
       phone: '+91 95907 04446',
       hours: '10:00 AM - 7:00 PM',
-      distance: '0.8 km',
       coordinates: { lat: 12.9716, lng: 77.5946 }
     },
   ]
 
+  const fetchCurrentLocation = () => {
+    return new Promise((resolve, reject) => {
+      if (!navigator.geolocation) {
+        reject(new Error('Geolocation is not supported by your browser'))
+        return
+      }
+
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const locationData = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          }
+          setUserLocation(locationData)
+          setLocationPermissionGranted(true)
+          resolve(locationData)
+        },
+        (error) => {
+          setLocationPermissionGranted(false)
+          reject(error)
+        },
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 } // maximumAge: 0 forces fresh location
+      )
+    })
+  }
+
   const handleFindBranches = async (e) => {
     e.preventDefault()
-    if (!location.trim()) {
-      toast.error('Please enter your location')
-      return
-    }
-
     setLoading(true)
+
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500))
-      setBranches(sampleBranches)
-      setSelectedBranch(sampleBranches[0])
-      toast.success(`Found ${sampleBranches.length} branches near you`)
+      let currentLocation = userLocation
+      
+      // Try to get fresh location if permission might be granted now
+      try {
+        const freshLocation = await fetchCurrentLocation()
+        currentLocation = freshLocation
+        toast.success('Location updated successfully')
+      } catch (error) {
+        // If location fetch fails, use existing userLocation or Kochi fallback
+        if (!currentLocation) {
+          currentLocation = KOCHI_COORDINATES
+          toast.info('Using  default location')
+        }
+      }
+
+      await new Promise(resolve => setTimeout(resolve, 500))
+
+      const branchesWithDistance = sampleBranches.map(branch => {
+        const distance = calculateDistance(
+          currentLocation.lat,
+          currentLocation.lng,
+          branch.coordinates.lat,
+          branch.coordinates.lng
+        )
+
+        return {
+          ...branch,
+          distance: `${distance.toFixed(2)}`,
+          distanceValue: distance,
+        }
+      })
+
+      // Sort nearest first
+      branchesWithDistance.sort(
+        (a, b) => a.distanceValue - b.distanceValue
+      )
+
+      setBranches(branchesWithDistance)
+      setSelectedBranch(branchesWithDistance[0])
+
+      const locationName = locationPermissionGranted ? 'your location' : 'Kochi (default)'
+      toast.success(`Found ${branchesWithDistance.length} branches near ${locationName}`)
     } catch (error) {
-      toast.error('Failed to find branches. Please try again.')
-      console.error('Error finding branches:', error)
+      toast.error('Failed to find branches')
     } finally {
       setLoading(false)
     }
@@ -71,17 +131,81 @@ export default function BranchFinder() {
     window.location.href = `tel:${phone}`
   }
 
+  const getCurrentLocation = () => {
+    if (!navigator.geolocation) {
+      toast.error('Geolocation is not supported by your browser. Using  default location.')
+      setUserLocation(KOCHI_COORDINATES)
+      setLocationPermissionGranted(false)
+      return
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setUserLocation({
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        })
+        setLocationPermissionGranted(true)
+        toast.success('Location detected successfully')
+      },
+      () => {
+        toast.error('Unable to fetch your location. Using  default location.')
+        setUserLocation(KOCHI_COORDINATES)
+        setLocationPermissionGranted(false)
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
+    )
+  }
+
+  useEffect(() => {
+    getCurrentLocation()
+    
+    // Also initialize branches with Kochi as default location on component mount
+    const initializeBranches = () => {
+      const branchesWithDistance = sampleBranches.map(branch => {
+        const distance = calculateDistance(
+          KOCHI_COORDINATES.lat,
+          KOCHI_COORDINATES.lng,
+          branch.coordinates.lat,
+          branch.coordinates.lng
+        )
+
+        return {
+          ...branch,
+          distance: `${distance.toFixed(2)}`,
+          distanceValue: distance,
+        }
+      })
+
+      branchesWithDistance.sort((a, b) => a.distanceValue - b.distanceValue)
+      setBranches(branchesWithDistance)
+      setSelectedBranch(branchesWithDistance[0])
+    }
+
+    initializeBranches()
+  }, [])
+
+  const calculateDistance = (lat1, lon1, lat2, lon2) => {
+    const toRad = (value) => (value * Math.PI) / 180
+    const R = 6371 // Earth radius in KM
+
+    const dLat = toRad(lat2 - lat1)
+    const dLon = toRad(lon2 - lon1)
+
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(toRad(lat1)) *
+        Math.cos(toRad(lat2)) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2)
+
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+    return R * c
+  }
+
   return (
     <section id="branches" className="py-16 bg-white">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold text-secondary mb-4">
-            Find a Branch
-          </h2>
-          <p className="text-gray-600">Locate your nearest Gold Centro branch</p>
-        </div>
-
-        {/* Search Box */}
         <div className="max-w-2xl mx-auto mb-12">
           <form onSubmit={handleFindBranches} className="relative">
             <div className="flex gap-4">
@@ -106,6 +230,14 @@ export default function BranchFinder() {
               </button>
             </div>
           </form>
+          <div className="mt-4 flex items-center justify-center gap-2 text-sm">
+            <div className={`w-3 h-3 rounded-full ${locationPermissionGranted ? 'bg-green-500' : 'bg-yellow-500'}`}></div>
+            <p className="text-gray-500">
+              {locationPermissionGranted 
+                ? 'Location access granted. Click "Find Branches" for accurate results.' 
+                : 'Location access not granted. Using  default location. Allow location for accurate results.'}
+            </p>
+          </div>
         </div>
 
         {/* Branches Grid */}
@@ -129,8 +261,8 @@ export default function BranchFinder() {
                         <span className="text-sm">{branch.address}</span>
                       </div>
                     </div>
-                    <div className="bg-primary text-secondary px-3 py-1 rounded-full text-sm font-semibold">
-                      {branch.distance}
+                    <div className="bg-primary text-secondary px-4 py-1 rounded-full text-xs font-semibold">
+                      {branch.distance} KM
                     </div>
                   </div>
                   

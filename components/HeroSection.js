@@ -17,7 +17,8 @@ export default function HeroSection() {
   const images = [
     '/images/hero1.jpg',
     '/images/hero2.jpg',
-    '/images/hero3.jpg'
+    '/images/hero4.jpg',
+    '/images/hero5.jpg'
   ]
 
   const slides = [
@@ -34,6 +35,13 @@ export default function HeroSection() {
       description: 'Stay updated with 24K and 22K gold prices. Make informed decisions with our real-time tracking.',
       cta: 'View Live Rates',
       accent: 'from-blue-500 to-indigo-600'
+    },
+    {
+      title: 'Secure Gold Storage Solutions',
+      subtitle: 'Bank-Grade Vault Protection',
+      description: 'Store your precious gold in our insured, temperature-controlled vaults with 24/7 security.',
+      cta: 'Learn More',
+      accent: 'from-emerald-500 to-teal-600'
     },
     {
       title: 'Secure Gold Storage Solutions',
@@ -145,7 +153,10 @@ export default function HeroSection() {
 
       {/* Main Content */}
       <div className="relative container mx-auto px-4 h-full flex items-center">
-        <div className="max-w-2xl text-white">
+        <div
+  key={currentImage}
+  className="max-w-2xl text-white"
+>
           {/* Slide Counter */}
           <div className="mb-6 flex items-center gap-3">
             <div className="text-lg font-semibold">
@@ -155,14 +166,16 @@ export default function HeroSection() {
           </div>
 
           {/* Title */}
-          <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
+          <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight animate-text">  
+           
             <span className="bg-gradient-to-r from-white via-amber-100 to-white bg-clip-text text-transparent">
               {slides[currentImage].title}
             </span>
+           
           </h1>
 
           {/* Subtitle */}
-          <p className="text-xl md:text-2xl text-amber-100 mb-4 font-medium">
+          <p className="text-xl md:text-2xl text-amber-100 mb-4 font-medium animate-text delay-1">
             {slides[currentImage].subtitle}
           </p>
 
@@ -180,8 +193,8 @@ export default function HeroSection() {
       {/* Scroll Indicator */}
       <div className="absolute bottom-8 right-8 z-20 hidden lg:block">
         <div className="flex flex-col items-center gap-3">
-          <span className="text-white/70 text-sm uppercase tracking-wider rotate-90 translate-y-8">Scroll</span>
-          <div className="h-24 w-px bg-gradient-to-b from-white/50 via-white to-transparent overflow-hidden">
+          <span className="text-primary/30 text-sm uppercase tracking-wider rotate-90 translate-y-8">Gold Centro</span>
+          <div className="h-24 w-px bg-gradient-to-b from-primary via-yellow-500 to-transparent overflow-hidden">
             <div className="w-full h-full bg-gradient-to-b from-white to-transparent animate-scroll-indicator" />
           </div>
         </div>
@@ -213,7 +226,40 @@ export default function HeroSection() {
         .animate-fade-in-up {
           animation: fade-in-up 0.8s ease-out;
         }
-      `}</style>
+      `}
+      
+
+      </style>
+      <style jsx>{`
+  @keyframes text-enter {
+    0% {
+      opacity: 0;
+      transform: translateY(60px);
+      filter: blur(6px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+      filter: blur(0);
+    }
+  }
+
+  .animate-text {
+    animation: text-enter 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .delay-1 {
+    animation-delay: 0.6s;
+  }
+
+  .delay-2 {
+    animation-delay: 0.9s;
+  }
+
+  .delay-3 {
+    animation-delay: 1.3s;
+  }
+`}</style>
     </section>
   )
 }

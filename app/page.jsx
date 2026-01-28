@@ -9,25 +9,48 @@ import FixedActionBar from '@/components/FixedActionBar'
 import GoldInquiryForm from '@/components/GoldInquiryForm'
 import GoldValuationProcess from '@/components/GoldValuationProcess'
 import FaQs from '@/components/FaQs'
+import BestGoldByers from '@/components/BestGoldBuyers'
+import ValueGold from '@/components/ValueGold'
+import WhyChooseValueGold from '@/components/WhyChooseValueGold'
+import CustomerTestimonials from '@/components/CustomerTestimonials'
+import FAQSection from '@/components/FAQSection'
+import DocumentsRequired from '@/components/DocumentsRequired'
+import RequestCallback from '@/components/RequestCallback'
+import HowItWorksPledge from '@/components/HowItWorksPledge'
+import SellGoldComponent from '@/components/SellGoldComponent'
+import PledgeGoldDes from '@/components/PledgeGoldDes'
+import OldGoldCalculator from '@/components/OldGoldCalculator'
+import PledgedGoldReleaseCalculator from '@/components/PledgedGoldReleaseCalculator'
 
 
 export default function Home() {
   return (
-    <main className="h-screen">
-      <Navbar />
+    <>
+     
       
       <HeroSection  />
-      <div className="mt-8">
-        <FixedActionBar />
-      </div>
-      <GoldInquiryForm/>
-      <GoldValuationProcess/>
-      <FaQs/>
-      <FeaturesSection />
-      <GoldRates />
-      <Services />
-      <BranchFinder />
-      <Footer />
-    </main>
+     
+        {/* <FixedActionBar /> */}
+     
+      <BestGoldByers/>
+      <ValueGold/>
+       
+      <WhyChooseValueGold/>
+      <CustomerTestimonials/>
+      <FAQSection/>
+      {/* <BranchFinder /> */}
+    
+     {/* <FaQs/> */}
+     
+      {/* <GoldInquiryForm/>
+    
+     
+      
+      
+    
+ 
+      <BranchFinder /> */}
+     
+    </>
   )
 }

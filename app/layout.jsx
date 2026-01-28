@@ -1,6 +1,10 @@
 import { Inter } from 'next/font/google'
 import './globals.css'
 import { Toaster } from 'react-hot-toast'
+import FloatingQuickNav from "@/components/FloatingQuickNav";
+import ChatBotWidget from "@/components/ChatBotWidget";
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -34,7 +38,13 @@ export default function RootLayout({ children }) {
             },
           }}
         />
+        <Navbar/>
+         <main className="min-h-screen">
         {children}
+        </main>
+        <Footer/>
+         <FloatingQuickNav />
+         <ChatBotWidget />
       </body>
     </html>
   )
