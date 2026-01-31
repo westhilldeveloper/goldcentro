@@ -10,14 +10,14 @@ const BestGoldBuyers = () => {
       id: 1,
       title: "Sell Gold",
       image: "/images/sellGold.jpg",
-      description: "Leverage your gold with ease during emergencies or financial needs. Convert your gold in a hassle-free way to handle unexpected expenses or meet important requirements. Selling your gold offers a real solution, giving you stability and flexibility during challenging times. Choose the most trusted gold buyersGold Centro - Sell Gold Beffkar",
+      description: "Turn your idle gold into immediate financial freedom. When emergencies strike or opportunities arise, Gold Centro provides the fastest, most trusted way to convert your gold into cash - with transparency, top market rates, and zero hassle.",
       buttonText: "Sell Gold",
     },
     {
       id: 2,
       title: "Release Pledged Gold",
       image: "/images/releaseGold.jpg",
-      description: "Escape the burden of mounting interest rates that weigh heavily on your shoulders and affect your financial well-being. Release your pledged gold stress-free withGold Centro. We help you release your pledged gold at the best market price, ensuring you receive the remaining value smoothly and quickly. ChooseGold Centro for a seamless and hassle-free process.",
+      description: "Every day your gold stays pledged, interest chips away at its worth. Break free from the debt cycle with Gold Centro's seamless pledged gold release service. We ensure you recover maximum remaining value quickly, turning financial burden back into personal wealth.",
       buttonText: "Release Gold",
     }
   ];

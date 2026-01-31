@@ -48,7 +48,7 @@ export default function Navbar() {
     setRateError(false);
     
     try {
-      console.log('Fetching live gold rate...');
+      
       const response = await fetch('/api/gold-rate', {
         method: 'GET',
         headers: {
@@ -63,7 +63,7 @@ export default function Navbar() {
       }
 
       const data = await response.json();
-      console.log('Gold rate API response:', data);
+     
       
       if (data.success && data.rates?.gold?.['24k']?.perGram) {
         const newRate = data.rates.gold['24k'].perGram;
@@ -207,12 +207,6 @@ export default function Navbar() {
           icon: <FaHistory className="text-amber-500" />,
           description: 'Trust and excellence'
         },
-        { 
-          name: 'Management', 
-          href: 'management',
-          icon: <FaAward className="text-amber-500" />,
-          description: ''
-        },
       ]
     },
     { 
@@ -238,14 +232,7 @@ export default function Navbar() {
 
   // Additional navigation items
   const additionalNavItems = [
-    // { 
-    //   name: 'EXPERIENCE', 
-    //   href: '#experience',
-    // },
-    // { 
-    //   name: 'PARTNER WITH US', 
-    //   href: '#partner',
-    // },
+   
     { 
       name: 'BLOG', 
       href: '#blog'
